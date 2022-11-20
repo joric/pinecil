@@ -45,8 +45,9 @@ function onButtonClick() {
   log('Requesting any Bluetooth Device...');
   navigator.bluetooth.requestDevice({
      // filters: [...] <- Prefer filters to save energy & show relevant devices.
+     filters: [{'services':[liveService, settingsService]}],
      optionalServices: [liveService, settingsService],
-     acceptAllDevices: true
+     //acceptAllDevices: true // incompatible with filters
   })
   .then(device => {
     bluetoothDevice = device;
