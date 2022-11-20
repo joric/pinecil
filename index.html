@@ -44,7 +44,7 @@ function onButtonClick() {
   bluetoothDevice = null;
   log('Requesting any Bluetooth Device...');
   navigator.bluetooth.requestDevice({
-     filters: [{'services':[liveService, settingsService]}, {'name':'Pinecil'}],
+     filters: [{'services':[liveService, settingsService]}, {'namePrefix':'Pinecil'}],
      //acceptAllDevices: true // incompatible with filters
   })
   .then(device => {
