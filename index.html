@@ -109,7 +109,6 @@ function poll() {
 
   for (const [name,prop] of Object.entries(cc_ids)) {
     //console.log(name, prop);
-    let uuid = prop['uuid'];
     cc[prop['uuid']].readValue()
     .then(value => {
       x = value.getUint8(0);
