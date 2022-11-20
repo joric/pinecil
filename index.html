@@ -17,6 +17,11 @@ let BT_UUID_CHAR_BLE_LIVE_HANDLE_INPUT    = '00000004-0000-1000-8000-00805f9b34f
 let BT_UUID_CHAR_BLE_LIVE_POWER_LEVEL     = '00000005-0000-1000-8000-00805f9b34fb';
 let BT_UUID_CHAR_BLE_LIVE_POWER_SRC       = '00000006-0000-1000-8000-00805f9b34fb';
 
+let cc_ids = {
+  'live_temp': {'uuid':BT_UUID_CHAR_BLE_LIVE_LIVE_TEMP, 'divider':1, 'description':'Live Temp', 'symbol':'C'},
+  'dc_input': {'uuid':BT_UUID_CHAR_BLE_LIVE_DC_INPUT, 'divider':10, 'description':'DC Input', 'symbol':'V'}
+};
+
 let cc = new Object();
 
 var myService = BT_UUID_SVC_LIVE_DATA;
@@ -102,22 +107,19 @@ function time(text) {
 function poll() {
   let err = null;
 
-  cc[BT_UUID_CHAR_BLE_LIVE_LIVE_TEMP].readValue()
-  .then(value => {
-    document.getElementById("live_temp").textContent=value.getUint8(0);
-  })
-  .catch(function(error) {
-    err = true;
-  });
-
-
-  cc[BT_UUID_CHAR_BLE_LIVE_DC_INPUT].readValue()
-  .then(value => {
-    document.getElementById("dc_input").textContent=value.getUint8(0)/10;
-  })
-  .catch(function(error) {
-    err = true;
-  });
+  for (const [name,prop] of Object.entries(cc_ids)) {
+    //console.log(name, prop);
+    let uuid = prop['uuid'];
+    cc[prop['uuid']].readValue()
+    .then(value => {
+      x = value.getUint8(0);
+      x /= prop['divider'];
+      document.getElementById(name).textContent = x;
+    })
+    .catch(function(error) {
+      err = true;
+    });
+  }
 
   if (err==null) {
     setTimeout(poll, 1000);
