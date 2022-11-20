@@ -19,8 +19,9 @@ let BT_UUID_CHAR_BLE_LIVE_POWER_SRC       = '00000006-0000-1000-8000-00805f9b34f
 
 let cc_ids = {
   'live_temp':     {'uuid':BT_UUID_CHAR_BLE_LIVE_LIVE_TEMP, 'divider':1, 'description':'Live Temp', 'symbol':'C'},
-  //'setpoint_temp': {'uuid':BT_UUID_CHAR_BLE_LIVE_SETPOINT_TEMP, 'divider':1, 'description':'Setpoint Temp', 'symbol':'C'},
-  'dc_input':      {'uuid':BT_UUID_CHAR_BLE_LIVE_DC_INPUT, 'divider':10, 'description':'DC Input', 'symbol':'V'}
+  'setpoint_temp': {'uuid':BT_UUID_CHAR_BLE_LIVE_SETPOINT_TEMP, 'divider':1, 'description':'Setpoint Temp', 'symbol':'C'},
+  'dc_input':      {'uuid':BT_UUID_CHAR_BLE_LIVE_DC_INPUT, 'divider':10, 'description':'DC Input', 'symbol':'V'},
+  'handle_input':  {'uuid':BT_UUID_CHAR_BLE_LIVE_HANDLE_INPUT, 'divider':10, 'description':'Handle Input', 'symbol':'V'}
 };
 
 let cc = new Object();
@@ -134,7 +135,9 @@ function poll() {
 <button onClick='onButtonClick()'>connect</button>
 
 <h2>Live Temp: <span id="live_temp">0</span>C</h2>
+<h2>Setpoint Temp: <span id="setpoint_temp">0</span>C</h2>
 <h2>DC Input: <span id="dc_input">0</span>V</h2>
+<h2>Handle Input: <span id="handle_input">0</span>V</h2>
 
 <p>Status: <span id="status">disconnected</span>
 <p>Wiki: <a href="https://github.com/joric/pinecil/wiki">https://github.com/joric/pinecil/wiki</a>
