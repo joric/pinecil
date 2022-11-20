@@ -1,4 +1,4 @@
-# pinecil-client
+# pinecil
 
 Bluetooth client for Pinecil V2
 
