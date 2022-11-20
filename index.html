@@ -7,6 +7,8 @@
 <title>Pinecil V2 Bluetooth Client</title>
 <script>
 
+// see https://github.com/Ralim/IronOS/blob/BLE/source/Core/BSP/Pinecilv2/ble_characteristics.h
+
 let BT_UUID_SVC_LIVE_DATA                 = 'd85efab4-168e-4a71-affd-33e27f9bc533';
 let BT_UUID_SVC_SETTINGS_DATA             = 'f6d75f91-5a10-4eba-a233-47d3f26a907f';
 
@@ -28,9 +30,8 @@ let cc_ids = {
 
 let cc = new Object();
 
-var myService = BT_UUID_SVC_LIVE_DATA;
-
-var propService = BT_UUID_SVC_SETTINGS_DATA;
+var liveService = BT_UUID_SVC_LIVE_DATA;
+var settingsService = BT_UUID_SVC_SETTINGS_DATA;
 
 var bluetoothDevice;
 
@@ -43,7 +44,7 @@ function onButtonClick() {
   log('Requesting any Bluetooth Device...');
   navigator.bluetooth.requestDevice({
      // filters: [...] <- Prefer filters to save energy & show relevant devices.
-     optionalServices: [myService, propService],
+     optionalServices: [liveService, settingsService],
      acceptAllDevices: true
   })
   .then(device => {
@@ -69,18 +70,37 @@ function connect() {
 
       bluetoothDevice.gatt.connect()
       .then(function(server) {
-        return server.getPrimaryService(myService);
+
+
+        // get settings
+        server.getPrimaryService(settingsService)
+        .then(function(service) {
+            return service.getCharacteristics();
+        })
+        .then(function(settings) {
+          for (s of settings) {
+            console.log('SETTINGS_DATA', s);
+          }
+        })
+        .catch(function(error) {
+          log(error);
+        });
+
+
+
+        return server.getPrimaryService(liveService);
       })
       .then(function(service) {
         return service.getCharacteristics();
       })
       .then(function(characteristics) {
         for (c of characteristics) {
-          console.log(c);
+          console.log('LIVE_DATA', c);
           cc[c.uuid] = c
         }
         poll();
       })
+
     },
     function fail() {
       document.getElementById("status").textContent='disconnected';
