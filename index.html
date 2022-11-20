@@ -45,9 +45,9 @@ function onButtonClick() {
   log('Requesting any Bluetooth Device...');
   navigator.bluetooth.requestDevice({
      // filters: [...] <- Prefer filters to save energy & show relevant devices.
-     filters: [{'services':[liveService, settingsService]}],
+     //filters: [{'services':[liveService, settingsService]}],
      optionalServices: [liveService, settingsService],
-     //acceptAllDevices: true // incompatible with filters
+     acceptAllDevices: true // incompatible with filters
   })
   .then(device => {
     bluetoothDevice = device;
@@ -66,7 +66,7 @@ function connect() {
       return bluetoothDevice.gatt.connect();
     },
     function success() {
-      log('> Bluetooth Device connected. Try disconnect it now.');
+      log('> Bluetooth Device connected.');
 
       document.getElementById("status").textContent='connected';
 
@@ -160,6 +160,7 @@ function poll() {
 <body>
 
 <h1>Pinecil V2 Bluetooth Client</h1>
+
 <button onClick='onButtonClick()'>connect</button>
 
 <p>Status: <span id="status">disconnected</span>
