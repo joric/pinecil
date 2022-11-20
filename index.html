@@ -89,7 +89,7 @@ function connect() {
 
 function onDisconnected() {
   log('> Bluetooth Device disconnected');
-  document.getElementById("status").textContent='disconnected';
+  document.getElementById("status").textContent='disconnected, trying to connect...';
   connect();
 }
 
