@@ -22,8 +22,8 @@ let cc_ids = {
   'setpoint_temp': {'uuid':BT_UUID_CHAR_BLE_LIVE_SETPOINT_TEMP, 'divider':1, 'description':'Setpoint Temp', 'symbol':'C'},
   'dc_input':      {'uuid':BT_UUID_CHAR_BLE_LIVE_DC_INPUT, 'divider':10, 'description':'DC Input', 'symbol':'V'},
   'handle_input':  {'uuid':BT_UUID_CHAR_BLE_LIVE_HANDLE_INPUT, 'divider':10, 'description':'Handle Input', 'symbol':'V'},
-  'power_level':   {'uuid':BT_UUID_CHAR_BLE_LIVE_POWER_LEVEL, 'divider':1, 'description':'Power Level', 'symbol':'V'},
-  'power_src':     {'uuid':BT_UUID_CHAR_BLE_LIVE_POWER_SRC, 'divider':1, 'description':'Power Level', 'symbol':'V'},
+//  'power_level':   {'uuid':BT_UUID_CHAR_BLE_LIVE_POWER_LEVEL, 'divider':1, 'description':'Power Level', 'symbol':'V'},
+//  'power_src':     {'uuid':BT_UUID_CHAR_BLE_LIVE_POWER_SRC, 'divider':1, 'description':'Power Level', 'symbol':'V'},
 };
 
 let cc = new Object();
@@ -140,11 +140,13 @@ function poll() {
 <p>Status: <span id="status">disconnected</span>
 
 <h2>Live Temp: <span id="live_temp">0</span>C</h2>
-<h2>Setpoint Temp: <span id="setpoint_temp">0</span>C</h2>
 <h2>DC Input: <span id="dc_input">0</span>V</h2>
-<h2>Handle Input: <span id="handle_input">0</span>V</h2>
-<h2>Power Level: <span id="power_level">0</span></h2>
-<h2>Power Src: <span id="power_src">0</span></h2>
+<h3>Setpoint Temp: <span id="setpoint_temp">0</span>C</h3>
+<h3>Handle Input: <span id="handle_input">0</span>V</h3>
+<!--
+<h3>Power Level: <span id="power_level">0</span></h3>
+<h3>Power Src: <span id="power_src">0</span></h3>
+-->
 
 <p>Wiki: <a href="https://github.com/joric/pinecil/wiki">https://github.com/joric/pinecil/wiki</a>
 
