@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<script>
+
+/*
+
+// d85efab4-168e-4a71-affd-33e27f9bc533
+#define BT_UUID_SVC_LIVE_DATA BT_UUID_DECLARE_128(BT_UUID_128_ENCODE(0xd85efab4, 0x168e, 0x4a71, 0xaffd, 0x33e27f9bc533))
+// f6d75f91-5a10-4eba-a233-47d3f26a907f
+#define BT_UUID_SVC_SETTINGS_DATA BT_UUID_DECLARE_128(BT_UUID_128_ENCODE(0xf6d75f91, 0x5a10, 0x4eba, 0xa233, 0x47d3f26a907f))
+
+#define BT_UUID_CHAR_BLE_LIVE_LIVE_TEMP     BT_UUID_DECLARE_16(0x0001)
+#define BT_UUID_CHAR_BLE_LIVE_SETPOINT_TEMP BT_UUID_DECLARE_16(0x0002)
+#define BT_UUID_CHAR_BLE_LIVE_DC_INPUT      BT_UUID_DECLARE_16(0x0003)
+#define BT_UUID_CHAR_BLE_LIVE_HANDLE_TEMP   BT_UUID_DECLARE_16(0x0004)
+#define BT_UUID_CHAR_BLE_LIVE_POWER_LEVEL   BT_UUID_DECLARE_16(0x0005)
+#define BT_UUID_CHAR_BLE_LIVE_POWER_SRC     BT_UUID_DECLARE_16(0x0006)
+
+
+*/
+
+let BT_UUID_CHAR_BLE_LIVE_LIVE_TEMP       = '00000001-0000-1000-8000-00805f9b34fb'
+let BT_UUID_CHAR_BLE_LIVE_SETPOINT_TEMP   = '00000003-0000-1000-8000-00805f9b34fb'
+let BT_UUID_CHAR_BLE_LIVE_DC_INPUT        = '00000003-0000-1000-8000-00805f9b34fb'
+
+let cc = new Object();
+
+var myService = 'd85efab4-168e-4a71-affd-33e27f9bc533';
+
+var bluetoothDevice;
+
+let log = console.log
+
+function onButtonClick() {
+  bluetoothDevice = null;
+  log('Requesting any Bluetooth Device...');
+  navigator.bluetooth.requestDevice({
+     // filters: [...] <- Prefer filters to save energy & show relevant devices.
+     acceptAllDevices: true})
+  .then(device => {
+    bluetoothDevice = device;
+    bluetoothDevice.addEventListener('gattserverdisconnected', onDisconnected);
+    connect();
+  })
+  .catch(error => {
+    log('Argh! ' + error);
+  });
+}
+
+function connect() {
+  exponentialBackoff(3 /* max retries */, 2 /* seconds delay */,
+    function toTry() {
+      time('Connecting to Bluetooth Device... ');
+      return bluetoothDevice.gatt.connect();
+    },
+    function success() {
+      log('> Bluetooth Device connected. Try disconnect it now.');
+
+      bluetoothDevice.gatt.connect()
+      .then(function(server) {
+        return server.getPrimaryService(myService);
+      })
+      .then(function(service) {
+        return service.getCharacteristics();
+      })
+      .then(function(characteristics) {
+        for (c of characteristics) {
+          console.log(c);
+          cc[c.uuid] = c
+        }
+        poll();
+      })
+    },
+    function fail() {
+      time('Failed to reconnect.');
+    });
+}
+
+function onDisconnected() {
+  log('> Bluetooth Device disconnected');
+  connect();
+}
+
+function exponentialBackoff(max, delay, toTry, success, fail) {
+  toTry().then(result => success(result))
+  .catch(_ => {
+    if (max === 0) {
+      return fail();
+    }
+    time('Retrying in ' + delay + 's... (' + max + ' tries left)');
+    setTimeout(function() {
+      exponentialBackoff(--max, delay * 2, toTry, success, fail);
+    }, delay * 1000);
+  });
+}
+
+function time(text) {
+  log('[' + new Date().toJSON().substr(11, 8) + '] ' + text);
+}
+
+////////////////////////
+
+function poll() {
+  let err = null;
+
+  cc[BT_UUID_CHAR_BLE_LIVE_LIVE_TEMP].readValue()
+  .then(value => {
+    document.getElementById("live_temp").textContent=value.getUint8(0);
+  })
+  .catch(function(error) {
+    err = true;
+  });
+
+
+  cc[BT_UUID_CHAR_BLE_LIVE_DC_INPUT].readValue()
+  .then(value => {
+    document.getElementById("dc_input").textContent=value.getUint8(0)/10;
+  })
+  .catch(function(error) {
+    err = true;
+  });
+
+  if (err==null) {
+    setTimeout(poll, 1000);
+  }
+}
+
+</script>
+<title>Bluetooth WEB API - Pinecil V2 Client</title>
+</head>
+<body>
+<button onClick='onButtonClick()'>connect</button>
+
+<h2>Live Temp: <span id="live_temp">0</span>C</h2>
+<h2>DC Input: <span id="dc_input">0</span>V</h2>
+
+</body>
+</html>
