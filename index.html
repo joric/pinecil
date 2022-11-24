@@ -223,7 +223,6 @@ window.addEventListener('load', function(event) {
 function connect() {
   exponentialBackoff(3 /* max retries */, 2 /* seconds delay */,
     function toTry() {
-      console.log('Current Device', bluetoothDevice);
       time('Connecting to Bluetooth Device... ');
       return bluetoothDevice.gatt.connect();
     },
