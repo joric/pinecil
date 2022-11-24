@@ -229,8 +229,9 @@ function connect() {
 
       document.getElementById("status").textContent='connected';
 
-      bluetoothDevice.gatt.connect()
+      connected = false;
 
+      bluetoothDevice.gatt.connect()
       .then(function(server) {
         server.getPrimaryService(BT_UUID_SVC_SETTINGS_DATA)
         .then(function(service) {
@@ -253,13 +254,14 @@ function connect() {
          cc[BT_UUID_SVC_BULK_DATA + c.uuid] = c
 
          console.log('All good.');
+
+         connected = true;
+
          poll();
       })
       .catch(function(error) {
         log(error);
       });
-
-      connected = true;
 
     },
     function fail() {
