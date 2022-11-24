@@ -235,34 +235,29 @@ function connect() {
       bluetoothDevice.gatt.connect()
 
       .then(function(server) {
-
-
-        // get settings
         server.getPrimaryService(BT_UUID_SVC_SETTINGS_DATA)
         .then(function(service) {
-            return service.getCharacteristics();
+            return service.getCharacteristic(BT_UUID_CHAR_BLE_SETTINGS_VALUE_1);
         })
-        .then(function(settings) {
-          log('got', settings.length, 'settings', BT_UUID_SVC_SETTINGS_DATA);
-          for (c of settings) {
+        .then(function(c) {
+            console.log('GOT SETTING', c);
             cc[BT_UUID_SVC_SETTINGS_DATA + c.uuid] = c
-          }
         })
         .catch(function(error) {
           log(error);
         });
-
         return server.getPrimaryService(BT_UUID_SVC_BULK_DATA);
       })
       .then(function(service) {
-        return service.getCharacteristics();
+        return service.getCharacteristic(BT_UUID_CHAR_BLE_BULK_LIVE_DATA);
       })
-      .then(function(characteristics) {
-        log('got', characteristics.length, 'characteristics', BT_UUID_SVC_BULK_DATA);
-        for (c of characteristics) {
-          cc[BT_UUID_SVC_BULK_DATA + c.uuid] = c
-        }
+      .then(function(c) {
+         console.log('GOT LIVE DATA', c);
+         cc[BT_UUID_SVC_BULK_DATA + c.uuid] = c
       })
+      .catch(function(error) {
+        log(error);
+      });
 
       connected = true;
 
