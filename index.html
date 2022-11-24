@@ -568,17 +568,6 @@ const config = {
       <div class="controls">
 
         <div>
-          Setpoint Temp: <span id="setpoint_temp">0</span>&deg;C
-          <br>DC Input: <span id="dc_input">0</span>V
-          <br>Handle Temp: <span id="handle_temp">0</span>&deg;C
-        </div>
-
-        <div>
-          <div class="label temp"><output id="temp_range_label">0</output>&deg;C</div>
-          <input type="range" id="temp_range" value="0" min="0" max="450" step="5" disabled/>
-        </div>
-
-        <div>
             <div>
               <button id="requestBluetoothDevice">Request Bluetooth Device</button>
             </div>
@@ -588,6 +577,18 @@ const config = {
             </div>
           Status: <span id="status">disconnected</span>
           <br><a href="https://github.com/joric/pinecil/wiki">Help</a>
+        </div>
+
+
+        <div>
+          <div class="label temp"><output id="temp_range_label">0</output>&deg;C</div>
+          <input type="range" id="temp_range" value="0" min="0" max="450" step="5" disabled/>
+        </div>
+
+        <div>
+          Setpoint Temp: <span id="setpoint_temp">0</span>&deg;C
+          <br>DC Input: <span id="dc_input">0</span>V
+          <br>Handle Temp: <span id="handle_temp">0</span>&deg;C
         </div>
 
       </div>
