@@ -252,10 +252,7 @@ function connect() {
          console.log('bulk',c);
          cc[BT_UUID_SVC_BULK_DATA + c.uuid] = c
 
-          setInterval(() => {
-            poll();
-          }, 1000);
-
+         poll();
       })
       .catch(function(error) {
         log(error);
@@ -484,6 +481,8 @@ const config = {
   var chart = new Chart('chart', config, {animationSteps: 200});
 
   setInterval(() => {
+
+    poll();
 
     chart.data.labels.push('');
     chart.data.datasets[0].data.push(temp);
