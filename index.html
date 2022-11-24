@@ -252,7 +252,10 @@ function connect() {
          console.log('bulk',c);
          cc[BT_UUID_SVC_BULK_DATA + c.uuid] = c
 
-         poll();
+          setInterval(() => {
+            poll();
+          }, 1000);
+
       })
       .catch(function(error) {
         log(error);
@@ -324,6 +327,18 @@ function poll() {
       handle = value.getUint32(8, true) / 10;
       dc = value.getUint32(12, true) / 10;
       watt = Math.round(value.getUint32(16, true) / 10);
+
+      animateValue('live_temp', temp, 1000);
+      animateValue('power_level', watt, 1000);
+
+      document.getElementById("setpoint_temp").textContent = spt;
+
+      document.getElementById("temp_range_label").textContent = spt;
+      document.getElementById("temp_range").value = spt;
+
+      document.getElementById("dc_input").textContent = dc;
+      document.getElementById("handle_temp").textContent = handle;
+
     })
     .catch(function(error) {
       // do nothing
@@ -470,8 +485,6 @@ const config = {
 
   setInterval(() => {
 
-    poll();
-
     chart.data.labels.push('');
     chart.data.datasets[0].data.push(temp);
     chart.data.datasets[1].data.push(watt);
@@ -482,18 +495,6 @@ const config = {
         dataset.data.shift();
       }
     }
-
-    animateValue('live_temp', temp, 1000);
-    animateValue('power_level', watt, 1000);
-
-
-    document.getElementById("setpoint_temp").textContent = spt;
-
-    document.getElementById("temp_range_label").textContent = spt;
-    document.getElementById("temp_range").value = spt;
-
-    document.getElementById("dc_input").textContent = dc;
-    document.getElementById("handle_temp").textContent = handle;
 
     chart.update();
 
