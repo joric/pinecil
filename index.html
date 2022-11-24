@@ -164,7 +164,7 @@ function onForgetBluetoothDeviceButtonClick() {
   });
 }
 
-function populateBluetoothDevices() {
+function populateBluetoothDevices(tryToConnect) {
   if (!autoconnect) {
     return;
   }
@@ -184,6 +184,14 @@ function populateBluetoothDevices() {
         populatedDevice = device;
       }
     }
+
+    if (tryToConnect && populatedDevice) {
+      bluetoothDevice = populatedDevice;
+      console.log('Autoconnecting to', bluetoothDevice);
+      bluetoothDevice.addEventListener('gattserverdisconnected', onDisconnected);
+      connect();
+    }
+
   })
   .catch(error => {
     log('Argh! ' + error);
@@ -206,17 +214,7 @@ window.addEventListener('load', function(event) {
 
   document.querySelector('#deviceSelector').style.display='block';
 
-  populateBluetoothDevices();
-
-  setTimeout(function() {
-    if (populatedDevice) {
-      bluetoothDevice = populatedDevice;
-      console.log('Autoconnecting to', bluetoothDevice);
-      bluetoothDevice.addEventListener('gattserverdisconnected', onDisconnected);
-      connect();
-    }
-  }, 2000);
-
+  populateBluetoothDevices(true);
 });
 
 
@@ -239,7 +237,7 @@ function connect() {
             return service.getCharacteristic(BT_UUID_CHAR_BLE_SETTINGS_VALUE_1);
         })
         .then(function(c) {
-            console.log('GOT SETTING', c);
+            console.log('setting',c);
             cc[BT_UUID_SVC_SETTINGS_DATA + c.uuid] = c
         })
         .catch(function(error) {
@@ -251,8 +249,10 @@ function connect() {
         return service.getCharacteristic(BT_UUID_CHAR_BLE_BULK_LIVE_DATA);
       })
       .then(function(c) {
-         console.log('GOT LIVE DATA', c);
+         console.log('bulk',c);
          cc[BT_UUID_SVC_BULK_DATA + c.uuid] = c
+
+         poll();
       })
       .catch(function(error) {
         log(error);
@@ -293,35 +293,44 @@ function time(text) {
   log('[' + new Date().toJSON().substr(11, 8) + '] ' + text);
 }
 
-////////////////////////
+var temp,spt,handle,dc,watt;
+temp = spt = handle = dc = watt = 0;
 
 function poll() {
-  clearTimeout(timeoutID);
+  liveID = BT_UUID_SVC_BULK_DATA + BT_UUID_CHAR_BLE_BULK_LIVE_DATA;
 
+  //temp = parseInt(document.getElementById('temp_range_value').value);
+  //watt = Math.floor((Math.random() * maxPower) + 1);
 
-  /*
-  for (const [name,prop] of Object.entries(cc_ids)) {
-    //console.log(name, prop);
+  if (connected && cc[liveID]) {
 
-    cc[prop['uuid']].readValue()
+    cc[liveID].readValue()
     .then(value => {
-      x = value.getUint32(0, true); //true means little endian from byte-position 0 in buffer
-      x /= prop['divider'];
-      document.getElementById(name).textContent = x;
 
-      if (name == "live_temp") live_temp = x;
-      if (name == "power_level") power_level = x;
+/*
+    uint32_t bulkData[] = {
+        TipThermoModel::getTipInC(),                                         // Current temp
+        getSettingValue(SettingsOptions::SolderingTemp),                     // Setpoint
+        getHandleTemperature(0),                                             // Handle X10 Temp in C
+        getInputVoltageX10(getSettingValue(SettingsOptions::VoltageDiv), 0), // Input voltage
+        x10WattHistory.average(),                                            // Estimated Wattage
+        X10WattsToPWM(x10WattHistory.average()),                             // Power as PWM level
+        TipThermoModel::convertTipRawADCTouV(getTipRawTemp(0), true),        // Raw tip
+    };
+*/
+
+      temp = value.getUint32(0, true);
+      spt = value.getUint32(4, true);
+      handle = value.getUint32(8, true) / 10;
+      dc = value.getUint32(12, true) / 10;
+      watt = Math.round(value.getUint32(16, true) / 10);
     })
     .catch(function(error) {
       // do nothing
-      document.getElementById(name).textContent = 0;
-      if (name == "live_temp") live_temp = 0;
-      if (name == "power_level") power_level = 0;
+      console.log(error);
     });
+    
   }
-  */
-
-  timeoutID = setTimeout(poll, 1000);
 }
 
 function animateValue(id, end, duration) {
@@ -341,9 +350,6 @@ function animateValue(id, end, duration) {
         }
     }, stepTime);
 }
-
-var temp,spt,handle,dc,watt;
-temp = spt = handle = dc = watt = 0;
 
 window.onload = function() {
 
@@ -464,57 +470,21 @@ const config = {
 
   setInterval(() => {
 
-    // poll data here
+    poll();
 
-  liveID = BT_UUID_SVC_BULK_DATA + BT_UUID_CHAR_BLE_BULK_LIVE_DATA;
+    chart.data.labels.push('');
+    chart.data.datasets[0].data.push(temp);
+    chart.data.datasets[1].data.push(watt);
 
-  //temp = parseInt(document.getElementById('temp_range_value').value);
-  //watt = Math.floor((Math.random() * maxPower) + 1);
-
-  if (connected && cc[liveID]) {
-
-    cc[liveID].readValue()
-    .then(value => {
-
-/*
-    uint32_t bulkData[] = {
-        TipThermoModel::getTipInC(),                                         // Current temp
-        getSettingValue(SettingsOptions::SolderingTemp),                     // Setpoint
-        getHandleTemperature(0),                                             // Handle X10 Temp in C
-        getInputVoltageX10(getSettingValue(SettingsOptions::VoltageDiv), 0), // Input voltage
-        x10WattHistory.average(),                                            // Estimated Wattage
-        X10WattsToPWM(x10WattHistory.average()),                             // Power as PWM level
-        TipThermoModel::convertTipRawADCTouV(getTipRawTemp(0), true),        // Raw tip
-    };
-*/
-
-      temp = value.getUint32(0, true);
-      spt = value.getUint32(4, true);
-      handle = value.getUint32(8, true) / 10;
-      dc = value.getUint32(12, true) / 10;
-      watt = Math.round(value.getUint32(16, true) / 10);
-    })
-    .catch(function(error) {
-      // do nothing
-      console.log(error);
-    });
-    
-  }
-
-      chart.data.labels.push('');
-      chart.data.datasets[0].data.push(temp);
-      chart.data.datasets[1].data.push(watt);
-
-      if (chart.data.labels.length > DATA_COUNT) {
-        chart.data.labels.shift();
-        for (dataset of chart.data.datasets) {
-          dataset.data.shift();
-        }
+    if (chart.data.labels.length > DATA_COUNT) {
+      chart.data.labels.shift();
+      for (dataset of chart.data.datasets) {
+        dataset.data.shift();
       }
+    }
 
-      animateValue('live_temp', temp, 1000);
-      animateValue('power_level', watt, 1000);
-
+    animateValue('live_temp', temp, 1000);
+    animateValue('power_level', watt, 1000);
 
 
     document.getElementById("setpoint_temp").textContent = spt;
@@ -525,9 +495,7 @@ const config = {
     document.getElementById("dc_input").textContent = dc;
     document.getElementById("handle_temp").textContent = handle;
 
-
-      chart.update();
-
+    chart.update();
 
   }, updateInterval);
 
