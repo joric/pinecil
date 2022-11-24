@@ -106,6 +106,7 @@ let namePrefix = "Pinecil";
 let cc = new Object();
 
 var bluetoothDevice;
+var populatedDevice;
 var timeoutID;
 
 var backoffTimeoutID;
@@ -124,7 +125,6 @@ console.log('Autoconnect support (chrome://flags/#enable-web-bluetooth-new-permi
 var connected = false;
 
 function onRequestBluetoothDeviceButtonClick() {
-  firstConnect = false;
   let services = [BT_UUID_SVC_BULK_DATA, BT_UUID_SVC_SETTINGS_DATA];
   log('Requesting any Bluetooth Device...');
   navigator.bluetooth.requestDevice({
@@ -180,19 +180,10 @@ function populateBluetoothDevices() {
       option.value = device.id;
       option.textContent = device.name;
       devicesSelect.appendChild(option);
-      if (firstConnect && device.name.startsWith(namePrefix)) {
-        bluetoothDevice = device;
+      if (device.name.startsWith(namePrefix)) {
+        populatedDevice = device;
       }
     }
-
-    if (firstConnect && bluetoothDevice) {
-      firstConnect = false;
-      console.log('Autoconnecting to', bluetoothDevice);
-      bluetoothDevice.addEventListener('gattserverdisconnected', onDisconnected);
-      connect();
-    }
-
-
   })
   .catch(error => {
     log('Argh! ' + error);
@@ -216,6 +207,15 @@ window.addEventListener('load', function(event) {
   document.querySelector('#deviceSelector').style.display='block';
 
   populateBluetoothDevices();
+
+  setTimeout(function() {
+    if (populatedDevice) {
+      bluetoothDevice = populatedDevice;
+      console.log('Autoconnecting to', bluetoothDevice);
+      bluetoothDevice.addEventListener('gattserverdisconnected', onDisconnected);
+      connect();
+    }
+  }, 1000);
 
 });
 
