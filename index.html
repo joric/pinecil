@@ -105,7 +105,7 @@ let namePrefix = "Pinecil";
 
 let cc = new Object();
 
-var bluetoothDevice = null;
+var bluetoothDevice;
 var timeoutID;
 
 var backoffTimeoutID;
@@ -180,20 +180,19 @@ function populateBluetoothDevices() {
       option.value = device.id;
       option.textContent = device.name;
       devicesSelect.appendChild(option);
-
-      if (firstConnect) {
-        if (device.name.startsWith(namePrefix)) {
-          bluetoothDevice = device;
-        }
-        firstConnect = false;
+      if (firstConnect && device.name.startsWith(namePrefix)) {
+        bluetoothDevice = device;
       }
     }
 
-    if (bluetoothDevice) {
+    if (firstConnect && bluetoothDevice) {
+      firstConnect = false;
       console.log('Autoconnecting to', bluetoothDevice);
       bluetoothDevice.addEventListener('gattserverdisconnected', onDisconnected);
       connect();
     }
+
+
   })
   .catch(error => {
     log('Argh! ' + error);
@@ -225,7 +224,6 @@ function connect() {
   exponentialBackoff(3 /* max retries */, 2 /* seconds delay */,
     function toTry() {
       console.log('Current Device', bluetoothDevice);
-
       time('Connecting to Bluetooth Device... ');
       return bluetoothDevice.gatt.connect();
     },
@@ -233,8 +231,6 @@ function connect() {
       log('> Bluetooth Device connected.');
 
       document.getElementById("status").textContent='connected';
-
-      connected = true;
 
       bluetoothDevice.gatt.connect()
 
@@ -268,6 +264,8 @@ function connect() {
         }
       })
 
+      connected = true;
+
     },
     function fail() {
       document.getElementById("status").textContent='disconnected';
@@ -285,10 +283,11 @@ function onDisconnected() {
 function exponentialBackoff(max, delay, toTry, success, fail) {
   clearTimeout(backoffTimeoutID);
   toTry().then(result => success(result))
-  .catch(_ => {
+  .catch(e => {
     if (max === 0) {
       return fail();
     }
+    console.log('error on connecting:', e);
     time('Retrying in ' + delay + 's... (' + max + ' tries left)');
     backoffTimeoutID = setTimeout(function() {
       exponentialBackoff(--max, delay * 2, toTry, success, fail);
@@ -580,15 +579,14 @@ const config = {
         </div>
 
         <div>
-
-            <button id="requestBluetoothDevice">Request Bluetooth Device</button>
-
+            <div>
+              <button id="requestBluetoothDevice">Request Bluetooth Device</button>
+            </div>
             <div id="deviceSelector">
               <select id="devicesSelect"></select>
               <button id="forgetBluetoothDevice">Forget</button>
             </div>
-
-          <br>Status: <span id="status">disconnected</span>
+          Status: <span id="status">disconnected</span>
           <br><a href="https://github.com/joric/pinecil/wiki">Help</a>
         </div>
 
