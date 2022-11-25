@@ -296,8 +296,7 @@ function time(text) {
   log('[' + new Date().toJSON().substr(11, 8) + '] ' + text);
 }
 
-var temp,spt,handle,dc,watt;
-temp = spt = handle = dc = watt = 0;
+temp = spt = handle = dc = watt = max_watt = 0;
 
 function poll() {
   liveID = BT_UUID_SVC_BULK_DATA + BT_UUID_CHAR_BLE_BULK_LIVE_DATA;
@@ -328,14 +327,15 @@ function poll() {
       dc = value.getUint32(12, true) / 10;
       watt = Math.round(value.getUint32(16, true) / 10);
 
+      max_watt = Math.max(max_watt, watt);
+
       animateValue('live_temp', temp, 1000);
       animateValue('power_level', watt, 1000);
-
-      document.getElementById("setpoint_temp").textContent = spt;
 
       document.getElementById("temp_range_label").textContent = spt;
       document.getElementById("temp_range").value = spt;
 
+      document.getElementById("max_watt").textContent = max_watt;
       document.getElementById("dc_input").textContent = dc;
       document.getElementById("handle_temp").textContent = handle;
 
@@ -551,7 +551,7 @@ const config = {
         </div>
 
         <div>
-          Setpoint Temp: <span id="setpoint_temp">0</span>&deg;C
+          <br>Peak Power: <span id="max_watt">0</span> W
           <br>DC Input: <span id="dc_input">0</span>V
           <br>Handle Temp: <span id="handle_temp">0</span>&deg;C
         </div>
