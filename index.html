@@ -137,7 +137,10 @@ var power_level = 0;
 
 let log = console.log
 
-var firstConnect = true;
+var settingsUpdate = true;
+
+var writingTemp = false;
+var writingTempValue = 0;
 
 var autoconnect = typeof navigator.bluetooth.getDevices != "undefined"
 
@@ -275,6 +278,7 @@ function connect() {
          cc[BT_UUID_SVC_BULK_DATA + c.uuid] = c
          console.log('All good.');
          connected = true;
+         settingsUpdate = true;
       })
       .catch(function(error) {
         log(error);
@@ -290,6 +294,7 @@ function connect() {
 function onDisconnected() {
   log('> Bluetooth Device disconnected');
   connected = false;
+  settingsUpdate = true;
   document.getElementById("status").textContent='disconnected, trying to connect...';
   connect();
 }
@@ -317,9 +322,6 @@ temp = spt = handle = dc = watt = max_watt = 0;
 
 function poll() {
   liveID = BT_UUID_SVC_BULK_DATA + BT_UUID_CHAR_BLE_BULK_LIVE_DATA;
-
-  //temp = parseInt(document.getElementById('temp_range_value').value);
-  //watt = Math.floor((Math.random() * maxPower) + 1);
 
   if (connected && cc[liveID]) {
 
@@ -349,12 +351,43 @@ function poll() {
       animateValue('live_temp', temp, updateInterval);
       animateValue('power_level', watt, updateInterval);
 
-      document.getElementById("temp_range_label").textContent = spt;
-      document.getElementById("temp_range").value = spt;
+      if (settingsUpdate) {
+        document.getElementById("temp_range_label").textContent = spt;
+        document.getElementById("temp_range").value = spt;
+        settingsUpdate = false;
+      }
 
       document.getElementById("max_watt").textContent = max_watt;
       document.getElementById("dc_input").textContent = dc;
       document.getElementById("handle_temp").textContent = handle;
+
+
+      if (writingTemp) {
+        writingTemp = false;
+
+        console.log('writing temp', writingTempValue);
+
+        tempID = BT_UUID_SVC_SETTINGS_DATA + BT_UUID_CHAR_BLE_SETTINGS_VALUE_1
+
+        if (connected && cc[tempID]) {
+
+          var view = new DataView(new ArrayBuffer(2));
+          view.setUint16(0, writingTempValue, true);
+
+          cc[tempID].writeValue(view)
+          .then(value => {
+            console.log('success! temperature set');
+          })
+          .catch(function(error) {
+            console.log('error on setting temperature', error);
+          });
+
+          setTimeout(function() {
+            settingsUpdate = true;
+          }, 3000);
+
+        }
+      } // writing temp
 
     })
     .catch(function(error) {
@@ -384,6 +417,15 @@ function animateValue(id, end, duration) {
 }
 
 window.onload = function() {
+
+  document.getElementById("temp_range").oninput = function() {
+    document.getElementById('temp_range_label').value = this.value;
+    let value = this.value;
+    if (value >= 50 || value <= 450) {
+      writingTemp = true;
+      writingTempValue = value;
+    }
+  };
 
   var count = 0;
   var maxHeight = 450;
@@ -530,13 +572,6 @@ const config = {
 
   }, updateInterval);
 
-
-  document.getElementById("temp_range").oninput = function() {
-    temp_range_label.value = this.value;
-  };
-
-  document.getElementById("temp_range").oninput(); //trigger once
-
 };
 
 </script>
@@ -573,7 +608,7 @@ const config = {
 
         <div>
           <div class="label temp"><output id="temp_range_label">0</output>&deg;C</div>
-          <input type="range" id="temp_range" value="0" min="0" max="450" step="5" disabled/>
+          <input type="range" id="temp_range" value="0" min="0" max="450" step="5"/>
         </div>
 
          <div>
