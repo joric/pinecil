@@ -105,6 +105,8 @@ let namePrefix = "Pinecil";
 
 let cc = new Object();
 
+var updateInterval = 1000;
+
 var bluetoothDevice;
 var populatedDevice;
 var timeoutID;
@@ -329,8 +331,8 @@ function poll() {
 
       max_watt = Math.max(max_watt, watt);
 
-      animateValue('live_temp', temp, 1000);
-      animateValue('power_level', watt, 1000);
+      animateValue('live_temp', temp, updateInterval);
+      animateValue('power_level', watt, updateInterval);
 
       document.getElementById("temp_range_label").textContent = spt;
       document.getElementById("temp_range").value = spt;
@@ -371,7 +373,6 @@ window.onload = function() {
   var count = 0;
   var maxHeight = 450;
   var maxPower = 120;
-  var updateInterval = 1000;
   var axisFontSize = 20;
 
   c1 = getComputedStyle(document.getElementById('live_temp')).getPropertyValue('color');
