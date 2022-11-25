@@ -254,12 +254,8 @@ function connect() {
       .then(function(c) {
          console.log('bulk',c);
          cc[BT_UUID_SVC_BULK_DATA + c.uuid] = c
-
          console.log('All good.');
-
          connected = true;
-
-         poll();
       })
       .catch(function(error) {
         log(error);
