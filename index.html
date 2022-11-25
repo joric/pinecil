@@ -459,6 +459,7 @@ const config = {
           },
           font: {size: axisFontSize},
           color: tColor,
+          //maxTicksLimit: 8,
         },
         grid:{
           borderDash: [8, 4],
@@ -547,6 +548,7 @@ const config = {
       <div class="controls">
 
         <div>
+            <div>Status: <span id="status">disconnected</span></div>
             <div>
               <div id="deviceSelector">
                 <select id="devicesSelect"></select>
@@ -554,21 +556,20 @@ const config = {
               </div>
               <button id="requestBluetoothDevice">Request Bluetooth Device</button>
             </div>
-          Status: <span id="status">disconnected</span>
-          <br><a href="https://github.com/joric/pinecil/wiki">Help</a>
+          <a href="https://github.com/joric/pinecil/wiki">Help</a>
         </div>
-
 
         <div>
           <div class="label temp"><output id="temp_range_label">0</output>&deg;C</div>
           <input type="range" id="temp_range" value="0" min="0" max="450" step="5" disabled/>
         </div>
 
-        <div>
+         <div>
           Peak Power: <span id="max_watt">0</span> W
           <br>DC Input: <span id="dc_input">0</span>V
           <br>Handle Temp: <span id="handle_temp">0</span>&deg;C
         </div>
+
 
       </div>
 
