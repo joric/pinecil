@@ -25,7 +25,7 @@ body, html {
 
 .chart-container {
   width: 95vw;
-  height:75vh;
+  height:70vh;
   margin: auto;
   position: relative;
   padding-top: 5vh;
@@ -89,13 +89,13 @@ body, html {
   background-color: #64CEAA;
   border: none;
   color: white;
-  padding: 15px 32px;
+  padding: 15px 25px;
   text-align: center;
   text-decoration: none;
   display: inline-block;
   font-size: 16px;
   border-radius: 4px;
-  margin-top: 0.5em;
+  margin-top: 0.5vh;
 }
 
 </style>
@@ -297,7 +297,7 @@ function onDisconnected() {
   log('> Bluetooth Device disconnected');
   connected = false;
   settingsUpdate = true;
-  document.getElementById("status").textContent='disconnected, trying to connect...';
+  document.getElementById("status").textContent='connecting...';
   connect();
 }
 
