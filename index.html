@@ -85,6 +85,19 @@ body, html {
   display: none;
 }
 
+#requestBluetoothDevice {
+  background-color: #64CEAA;
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  border-radius: 4px;
+  margin-top: 0.5em;
+}
+
 </style>
 
 <!--
@@ -220,7 +233,7 @@ window.addEventListener('load', function(event) {
     return
   }
 
-  document.querySelector('#deviceSelector').style.display = 'inline';
+  //document.querySelector('#deviceSelector').style.display = 'inline';
 
   populateBluetoothDevices(true);
 });
@@ -547,16 +560,15 @@ const config = {
 
       <div class="controls">
 
-        <div>
+         <div>
             <div>Status: <span id="status">disconnected</span></div>
             <div>
-              <div id="deviceSelector">
-                <select id="devicesSelect"></select>
-                <button id="forgetBluetoothDevice">Forget</button>
-              </div>
               <button id="requestBluetoothDevice">Request Bluetooth Device</button>
             </div>
-          <a href="https://github.com/joric/pinecil/wiki">Help</a>
+            <div id="deviceSelector">
+              <select id="devicesSelect"></select>
+              <button id="forgetBluetoothDevice">Forget</button>
+            </div>
         </div>
 
         <div>
