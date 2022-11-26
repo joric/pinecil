@@ -85,15 +85,11 @@ body, html {
   display: none;
 }
 
-.button {
-  cursor: pointer;
+button {
   background-color: #00c4ab;
   border: none;
   color: white;
   padding: 15px 25px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
   font-size: 16px;
   border-radius: 4px;
   margin-top: 0.5vh;
@@ -629,7 +625,7 @@ const config = {
          <div>
             <div>Status: <span id="status">disconnected</span></div>
             <div>
-              <button id="requestBluetoothDevice" class="button">Request Bluetooth Device</button>
+              <button id="requestBluetoothDevice">Request Bluetooth Device</button>
             </div>
             <div id="deviceSelector">
               <select id="devicesSelect"></select>
