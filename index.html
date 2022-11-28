@@ -444,6 +444,7 @@ function poll() {
             });
           }
 
+          console.log('Setting timeout 2 seconds to update temperature from device...');
           clearTimeout(settingsUpdateTimeoutID);
           settingsUpdateTimeoutID = setTimeout(function() {
             settingsUpdate = true;
