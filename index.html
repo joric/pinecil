@@ -42,22 +42,24 @@ body, html {
 .ocd {
   position: absolute;
   text-align: right;
-  width: 10.5em;
-  left: 3em;
+  width: 10em;
+  left: 1.5em;
   top: 7vh;
 }
 
 .controls {
   display: flex;
   flex-direction: row;
+  width: 100%;
 }
 
 .controls > div {
   width: 33%;
+  align-items: center;
   text-align: center;
 }
 
-@media (max-width: 600px) {
+@media (max-width: 800px) {
   .controls {
     flex-direction: column;
   }
@@ -71,7 +73,7 @@ body, html {
 
 
 .label {
-  font-size: 3em;
+  font-size: 2.5em;
   font-family: Arial, Helvetica, sans-serif;
   display: inline;
 }
@@ -84,34 +86,63 @@ body, html {
   color: #00c4ab;
 }
 
-#temp_range {
-  width: 90%;
-  accent-color: grey;
-}
-
 #deviceSelector {
   display: none;
 }
 
-button {
-  background-color: #00c4ab;
-  border: none;
-  color: white;
+.btn {
   padding: 12.5px 20px;
   font-size: 16px;
   border-radius: 4px;
-  margin-top: 0.5vh;
   cursor: pointer;
+  border: none;
 }
+
+.primary {
+  background-color: #00c4ab;
+  color: white;
+  margin-top: 0.5vh;
+}
+
+
+.range-group {
+  display: flex;
+}
+
+.range-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+.range-label {
+  display: block;
+}
+
+.range-input {
+  display: block;
+  width: 100%;
+  accent-color: grey;
+}
+
+.btn-range {
+  font-weight: bold;
+  margin-top: auto;
+}
+
 
 </style>
 
 <!--
 4+ glitches when removing/adding points because it needs shift() first
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.0.1/chart.umd.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.2.1/chart.min.js"></script>
+
 -->
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.2.1/chart.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.2.1/dist/chart.min.js"></script>
 
 <script>
 
@@ -127,6 +158,7 @@ var writingTempValue = 0;
 var connected = false;
 var autoconnect = false;
 var backoffTimeoutID;
+var populatedDevice;
 var cc = new Object();
 var log = console.log;
 
@@ -193,6 +225,7 @@ function onForgetBluetoothDeviceButtonClick() {
 }
 
 function populateBluetoothDevices(tryToConnect) {
+
   if (!autoconnect) {
     return;
   }
@@ -225,26 +258,6 @@ function populateBluetoothDevices(tryToConnect) {
     log('Argh! ' + error);
   });
 }
-
-
-window.addEventListener('load', function(event) {
-
-  document.querySelector('#requestBluetoothDevice').addEventListener('click', function() {
-      onRequestBluetoothDeviceButtonClick();
-  });
-  document.querySelector('#forgetBluetoothDevice').addEventListener('click', function() {
-      onForgetBluetoothDeviceButtonClick();
-  });
-
-  if (!autoconnect) { 
-    return
-  }
-
-  //document.querySelector('#deviceSelector').style.display = 'inline';
-
-  populateBluetoothDevices(true);
-});
-
 
 function connect() {
   exponentialBackoff(3 /* max retries */, 2 /* seconds delay */,
@@ -333,6 +346,23 @@ function time(text) {
   log('[' + new Date().toJSON().substr(11, 8) + '] ' + text);
 }
 
+function getTempValue(value) {
+  return parseInt(document.getElementById("temp_range").value);
+}
+
+function setTempValue(value) {
+  document.getElementById("temp_range_label").textContent = value;
+  document.getElementById("temp_range").value = value;
+}
+
+function changeTemp(value) {
+  document.getElementById('temp_range_label').value = value;
+  if (value >= 50 || value <= 450) {
+    writingTemp = true;
+    writingTempValue = value;
+  }
+}
+
 temp = spt = handle = dc = watt = max_watt = 0;
 
 function poll() {
@@ -369,8 +399,7 @@ function poll() {
       if (settingsUpdate) {
         settingsUpdate = false;
         console.log('Updating Setpoint Temp label.');
-        document.getElementById("temp_range_label").textContent = spt;
-        document.getElementById("temp_range").value = spt;
+        setTempValue(spt);
       }
 
       document.getElementById("max_watt").textContent = max_watt;
@@ -458,12 +487,7 @@ window.onload = function() {
 
 
   document.getElementById("temp_range").oninput = function() {
-    document.getElementById('temp_range_label').value = this.value;
-    let value = this.value;
-    if (value >= 50 || value <= 450) {
-      writingTemp = true;
-      writingTempValue = value;
-    }
+    changeTemp(this.value);
   };
 
   var count = 0;
@@ -611,7 +635,64 @@ const config = {
 
   }, updateInterval);
 
+
+  let holdIt = (id, getValueCallback, setValueCallback, writeValueCallback, minValue, maxValue, step, firstDelay, repeatDelay) => {
+    let t;
+    let btn = document.querySelector(id);
+    let autorepeat = false;
+    let value = 0;
+
+    btn.addEventListener('mousedown', () => {
+      value = getValueCallback();
+      autorepeat = false;
+      click();
+    });
+
+    ['mouseup', 'mouseout'].forEach(event => {
+      btn.addEventListener(event, () => {
+        clearTimeout(t);
+        writeValueCallback(value);
+      })
+    });
+
+    let click = () => {
+
+      let lastValue = value;
+
+      if (step>0) {
+        value = (value+step >= maxValue) ? maxValue : value + step;
+      } else {
+        value = (value+step <= minValue) ? minValue : value + step;
+      }
+
+      if (lastValue != value) {
+        setValueCallback(value);
+        t = setTimeout(click, autorepeat ? repeatDelay : firstDelay);
+        autorepeat = true;
+      }
+
+    }
+
+  };
+
+  holdIt('#minus', getTempValue, setTempValue, changeTemp, 0, 450, -5, 500, 75);
+  holdIt('#plus', getTempValue, setTempValue, changeTemp, 0, 450, 5, 500, 75);
+
+  document.querySelector('#requestBluetoothDevice').addEventListener('click', function() {
+      onRequestBluetoothDeviceButtonClick();
+  });
+  document.querySelector('#forgetBluetoothDevice').addEventListener('click', function() {
+      onForgetBluetoothDeviceButtonClick();
+  });
+
+  if (!autoconnect) { 
+    return
+  }
+
+  populateBluetoothDevices(true);
+
 };
+
 
 </script>
 </head>
@@ -648,7 +729,7 @@ Bluetooth API is not supported in this browser. What you can do:
          <div>
             <div>Status: <span id="status">disconnected</span></div>
             <div>
-              <button id="requestBluetoothDevice">Request Bluetooth Device</button>
+              <button id="requestBluetoothDevice" class="btn primary">Connect</button>
             </div>
             <div id="deviceSelector">
               <select id="devicesSelect"></select>
@@ -656,12 +737,16 @@ Bluetooth API is not supported in this browser. What you can do:
             </div>
         </div>
 
-        <div>
-          <div class="label temp"><output id="temp_range_label">0</output>&deg;C</div>
-          <input type="range" id="temp_range" value="0" min="0" max="450" step="5"/>
+        <div class="range-group">
+          <button id="minus" class="btn btn-range">&#8211;</button>
+          <div class="range-container">
+            <div class="label range-label temp"><output id="temp_range_label">0</output>&deg;C</div>
+            <input class="range-input" type="range" id="temp_range" value="0" min="0" max="450" step="5"/>
+          </div>
+          <button id="plus" class="btn btn-range">+</button>
         </div>
 
-         <div>
+        <div>
           Peak Power: <span id="max_watt">0</span> W
           <br>DC Input: <span id="dc_input">0</span>V
           <br>Handle Temp: <span id="handle_temp">0</span>&deg;C
