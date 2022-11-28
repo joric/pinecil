@@ -623,15 +623,18 @@ const config = {
   }, updateInterval);
 
 
-  let holdIt = (id, getValueCallback, setValueCallback, writeValueCallback, minValue, maxValue, step, firstDelay, repeatDelay) => {
+  let holdIt = (id, getValueCallback, setValueCallback, writeValueCallback, minValue, maxValue, step) => {
     let t;
     let btn = document.querySelector(id);
-    let autorepeat = false;
+    let clickCounter = 0;
     let value = 0;
+    let firstDelay = 500;
+    let secondDelay = 400;
+    let repeatDelay = 75;
 
     btn.addEventListener('mousedown', () => {
       value = getValueCallback();
-      autorepeat = false;
+      clickCounter = 0;
       click();
     });
 
@@ -652,16 +655,15 @@ const config = {
 
       if (lastValue != value) {
         setValueCallback(value);
-        t = setTimeout(click, autorepeat ? repeatDelay : firstDelay);
-        autorepeat = true;
+        let delay = clickCounter == 0 ? firstDelay : (clickCounter == 1 ? secondDelay : repeatDelay)
+        t = setTimeout(click, delay);
+        clickCounter += 1;
       }
-
     }
-
   };
 
-  holdIt('#minus', getTempValue, setTempValue, writeTempValue, 0, 450, -5, 500, 75);
-  holdIt('#plus', getTempValue, setTempValue, writeTempValue, 0, 450, 5, 500, 75);
+  holdIt('#minus', getTempValue, setTempValue, writeTempValue, 0, 450, -5);
+  holdIt('#plus', getTempValue, setTempValue, writeTempValue, 0, 450, 5);
 
   document.getElementById("temp_range").oninput = function(event) {
     // we do not want to overload the BLE traffic so just update display here
