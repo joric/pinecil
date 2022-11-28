@@ -351,11 +351,13 @@ function getTempValue(value) {
 }
 
 function setTempValue(value) {
+  clearTimeout(settingsUpdateTimeoutID);
   document.getElementById("temp_range_label").textContent = value;
   document.getElementById("temp_range").value = value;
 }
 
-function changeTemp(value) {
+function writeTempValue(value) {
+  clearTimeout(settingsUpdateTimeoutID);
   document.getElementById('temp_range_label').value = value;
   if (value >= 50 || value <= 450) {
     writingTemp = true;
@@ -398,7 +400,7 @@ function poll() {
 
       if (settingsUpdate) {
         settingsUpdate = false;
-        console.log('Updating Setpoint Temp label.');
+        console.log('Updating Setpoint Temp label from server:', spt);
         setTempValue(spt);
       }
 
@@ -487,7 +489,7 @@ window.onload = function() {
 
 
   document.getElementById("temp_range").oninput = function() {
-    changeTemp(this.value);
+    writeTempValue(this.value);
   };
 
   var count = 0;
@@ -675,8 +677,8 @@ const config = {
 
   };
 
-  holdIt('#minus', getTempValue, setTempValue, changeTemp, 0, 450, -5, 500, 75);
-  holdIt('#plus', getTempValue, setTempValue, changeTemp, 0, 450, 5, 500, 75);
+  holdIt('#minus', getTempValue, setTempValue, writeTempValue, 0, 450, -5, 500, 75);
+  holdIt('#plus', getTempValue, setTempValue, writeTempValue, 0, 450, 5, 500, 75);
 
   document.querySelector('#requestBluetoothDevice').addEventListener('click', function() {
       onRequestBluetoothDeviceButtonClick();
