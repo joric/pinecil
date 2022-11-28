@@ -624,13 +624,10 @@ const config = {
 
 
   let holdIt = (id, getValueCallback, setValueCallback, writeValueCallback, minValue, maxValue, step) => {
-    let t;
     let btn = document.querySelector(id);
+    let clickTimeoutID;
     let clickCounter = 0;
     let value = 0;
-    let firstDelay = 500;
-    let secondDelay = 400;
-    let repeatDelay = 75;
 
     btn.addEventListener('mousedown', () => {
       value = getValueCallback();
@@ -639,14 +636,12 @@ const config = {
     });
 
     btn.addEventListener('mouseup', () => {
-        clearTimeout(t);
+        clearTimeout(clickTimeoutID);
         writeValueCallback(value);
     });
 
     let click = () => {
-
       let lastValue = value;
-
       if (step>0) {
         value = (value+step >= maxValue) ? maxValue : value + step;
       } else {
@@ -655,8 +650,8 @@ const config = {
 
       if (lastValue != value) {
         setValueCallback(value);
-        let delay = clickCounter == 0 ? firstDelay : (clickCounter == 1 ? secondDelay : repeatDelay)
-        t = setTimeout(click, delay);
+        let delay = clickCounter==0 ? 500 : (clickCounter==1 ? 450 : 75)
+        clickTimeoutID = setTimeout(click, delay);
         clickCounter += 1;
       }
     }
