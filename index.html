@@ -660,6 +660,7 @@ const config = {
 
     let click = () => {
       let lastValue = value;
+
       if (step>0) {
         value = (value+step >= maxValue) ? maxValue : value + step;
       } else {
@@ -675,8 +676,8 @@ const config = {
     }
   };
 
-  holdIt('#minus', getTempValue, setTempValue, writeTempValue, 0, 450, -5);
-  holdIt('#plus', getTempValue, setTempValue, writeTempValue, 0, 450, 5);
+  holdIt('#minus', getTempValue, setTempValue, writeTempValue, 0, 450, -1);
+  holdIt('#plus', getTempValue, setTempValue, writeTempValue, 0, 450, 1);
 
   document.getElementById("temp_range").oninput = function(event) {
     // we do not want to overload the BLE traffic so just update display here
@@ -764,7 +765,7 @@ const config = {
           <button id="minus" class="btn btn-range">&#8211;</button>
           <div class="range-container">
             <div id="range-label" class="label range-label temp" title="click to write temp to flash"><output id="temp_range_label">0</output>&deg;C</div>
-            <input class="range-input" type="range" id="temp_range" value="0" min="0" max="450" step="5"/>
+            <input class="range-input" type="range" id="temp_range" value="0" min="0" max="450" step="1"/>
           </div>
           <button id="plus" class="btn btn-range">+</button>
         </div>
