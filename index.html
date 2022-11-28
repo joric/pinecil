@@ -674,7 +674,7 @@ const config = {
 
   // click on temp label to save settings to flash
   document.querySelector('#range-label').addEventListener('click', function() {
-    if (confirm('Are you sure to write settings to flash?')) {
+    if (confirm('Are you sure to write Setpoint Temp to flash now?')) {
       if (connected) {
         persistentSettingsTrigger = true;
       }  
