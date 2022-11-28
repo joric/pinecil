@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+  <!DOCTYPE html>
 <html lang="en" dir="ltr">
 <head>
 <meta charset="utf-8">
@@ -488,10 +488,6 @@ window.onload = function() {
   document.querySelector('#container').style.display = 'block';
 
 
-  document.getElementById("temp_range").oninput = function() {
-    writeTempValue(this.value);
-  };
-
   var count = 0;
   var maxHeight = 450;
   var maxPower = 90;
@@ -679,6 +675,14 @@ const config = {
 
   holdIt('#minus', getTempValue, setTempValue, writeTempValue, 0, 450, -5, 500, 75);
   holdIt('#plus', getTempValue, setTempValue, writeTempValue, 0, 450, 5, 500, 75);
+
+  document.getElementById("temp_range").oninput = function(event) {
+    // check if it was a system event or just setting a value
+    if (event) {
+      writeTempValue(this.value);
+    }
+  };
+
 
   document.querySelector('#requestBluetoothDevice').addEventListener('click', function() {
       onRequestBluetoothDeviceButtonClick();
