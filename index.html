@@ -56,10 +56,11 @@ body, html {
   display: flex;
   flex-direction: row;
   width: 100%;
+  justify-content: space-evenly;
 }
 
 .controls > div {
-  width: 33%;
+  width: 30%;
   align-items: center;
   text-align: center;
 }
@@ -67,6 +68,7 @@ body, html {
 @media (max-width: 660px) {
   .controls {
     flex-direction: column;
+    align-items: center;
   }
   .controls div {
     width: 100%;
@@ -91,11 +93,11 @@ body, html {
 }
 
 .temp {
-  color: orangered;
+  color: tomato;
 }
 
 .power {
-  color: royalblue;
+  color: #00c4ab;
 }
 
 #deviceSelector {
@@ -103,15 +105,15 @@ body, html {
 }
 
 .primary {
-  background-color: royalblue;
+  background-color: #00c4ab;
   color: white;
   margin-top: 0.5vh;
 }
 
-
 .range-group {
   display: flex;
   min-width: 15em;
+  max-width: 20em;
 }
 
 .range-container {
@@ -750,7 +752,7 @@ const config = {
          <div>
             <div>Status: <span id="status">disconnected</span></div>
             <div>
-              <button id="requestBluetoothDevice" class="btn primary">Request Bluetooth Device</button>
+              <button id="requestBluetoothDevice" class="btn primary">Pair Device</button>
             </div>
             <div id="deviceSelector">
               <select id="devicesSelect"></select>
