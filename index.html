@@ -400,7 +400,7 @@ function poll() {
 
       if (settingsUpdate) {
         settingsUpdate = false;
-        console.log('Updating temperature control value from device:', spt);
+        console.log('Updating setpoint temp setting from device:', spt);
         setTempValue(spt);
       }
 
@@ -412,8 +412,6 @@ function poll() {
       if (writingTemp) {
         writingTemp = false;
 
-        console.log('Writing Setpoint Temp', writingTempValue);
-
         tempID = BT_UUID_SVC_SETTINGS_DATA + BT_UUID_CHAR_BLE_SETTINGS_VALUE_1
 
         if (connected && cc[tempID]) {
@@ -424,10 +422,10 @@ function poll() {
 
           cc[tempID].writeValue(view)
           .then(() => {
-            console.log('Setpont Temp', value, 'sent to device successfully.');
+            console.log('WRITE! Setpont Temp:', value);
           })
           .catch(function(error) {
-            console.log('Error on writing Setpont Temp.', error);
+            console.log('Error writing Setpont Temp.', error);
           });
 
           saveID = BT_UUID_SVC_SETTINGS_DATA + BT_UUID_CHAR_BLE_SETTINGS_VALUE_SAVE
@@ -437,7 +435,7 @@ function poll() {
 
             cc[saveID].writeValue(view)
             .then(value => {
-              console.log('Peristent settings save flag sent to device successfully.');
+              console.log('WRITE! Persistent settings.');
             })
             .catch(function(error) {
               console.log('Error on saving settings.', error);
