@@ -10,7 +10,7 @@
 body, * { margin: 0; padding: 0; }
 body, html {
   height:100%;
-  font-size: 1.1em;
+  font-size: 1em;
   font-family: Arial, Helvetica, sans-serif;
 }
 
@@ -59,7 +59,7 @@ body, html {
   text-align: center;
 }
 
-@media (max-width: 800px) {
+@media (max-width: 660px) {
   .controls {
     flex-direction: column;
   }
@@ -80,7 +80,6 @@ body, html {
 
 .btn {
   padding: 12.5px 20px;
-  font-size: 16px;
   border-radius: 4px;
   cursor: pointer;
   border: none;
@@ -107,6 +106,7 @@ body, html {
 
 .range-group {
   display: flex;
+  min-width: 15em;
 }
 
 .range-container {
@@ -480,7 +480,7 @@ window.onload = function() {
   var count = 0;
   var maxHeight = 450;
   var maxPower = 90;
-  var axisFontSize = 20;
+  var axisFontSize = 16;
   var lineWidth = 1;
 
   tColor = getComputedStyle(document.getElementById('live_temp')).getPropertyValue('color');
