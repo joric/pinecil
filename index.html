@@ -424,7 +424,7 @@ function poll() {
 
           cc[tempID].writeValue(view)
           .then(() => {
-            console.log('Setpont Temp', value, 'set successfully.');
+            console.log('Setpont Temp', value, 'sent to device successfully.');
           })
           .catch(function(error) {
             console.log('Error on writing Setpont Temp.', error);
@@ -437,7 +437,7 @@ function poll() {
 
             cc[saveID].writeValue(view)
             .then(value => {
-              console.log('Settins saved successfully.');
+              console.log('Peristent settings save flag sent to device successfully.');
             })
             .catch(function(error) {
               console.log('Error on saving settings.', error);
