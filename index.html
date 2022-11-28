@@ -650,7 +650,7 @@ const config = {
 
       if (lastValue != value) {
         setValueCallback(value);
-        let autorepeatDelay = clickCounter < 3 ? 300 : 100;
+        let autorepeatDelay = clickCounter < 4 ? 300 : 100;
         clickTimeoutID = setTimeout(click, autorepeatDelay);
         clickCounter += 1;
       }
