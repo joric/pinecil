@@ -435,7 +435,7 @@ function poll() {
 
             cc[saveID].writeValue(view)
             .then(value => {
-              console.log('WRITE! Persistent settings.');
+              console.log('WRITE! Save settings persistently.');
             })
             .catch(function(error) {
               console.log('Error on saving settings.', error);
