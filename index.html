@@ -628,16 +628,27 @@ const config = {
     let clickTimeoutID;
     let clickCounter = 0;
     let value = 0;
+    let locked = false;
 
     btn.addEventListener('mousedown', () => {
       value = getValueCallback();
       clickCounter = 0;
+      locked = true;
       click();
     });
 
     btn.addEventListener('mouseup', () => {
         clearTimeout(clickTimeoutID);
         writeValueCallback(value);
+        locked = false;
+    });
+
+    btn.addEventListener('mouseout', () => {
+        clearTimeout(clickTimeoutID);
+        if (locked) {
+          writeValueCallback(value);
+          locked = false;
+        }
     });
 
     let click = () => {
