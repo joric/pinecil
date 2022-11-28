@@ -343,7 +343,7 @@ function time(text) {
   log('[' + new Date().toJSON().substr(11, 8) + '] ' + text);
 }
 
-function getTempValue(value) {
+function getTempValue() {
   return parseInt(document.getElementById("temp_range").value);
 }
 
@@ -674,7 +674,7 @@ const config = {
 
   // click on temp label to save settings to flash
   document.querySelector('#range-label').addEventListener('click', function() {
-    if (confirm('Are you sure to write Setpoint Temp to flash now?')) {
+    if (confirm('Are you sure to write Setpoint Temp ('+getTempValue()+') to flash?')) {
       if (connected) {
         persistentSettingsTrigger = true;
       }  
