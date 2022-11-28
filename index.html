@@ -417,13 +417,14 @@ function poll() {
         tempID = BT_UUID_SVC_SETTINGS_DATA + BT_UUID_CHAR_BLE_SETTINGS_VALUE_1
 
         if (connected && cc[tempID]) {
+          value = writingTempValue;
 
           var view = new DataView(new ArrayBuffer(2));
-          view.setUint16(0, writingTempValue, true);
+          view.setUint16(0, value, true);
 
           cc[tempID].writeValue(view)
-          .then(value => {
-            console.log('Setpont Temp set successfully.');
+          .then(() => {
+            console.log('Setpont Temp', value, 'set successfully.');
           })
           .catch(function(error) {
             console.log('Error on writing Setpont Temp.', error);
@@ -646,11 +647,9 @@ const config = {
       click();
     });
 
-    ['mouseup', 'mouseout'].forEach(event => {
-      btn.addEventListener(event, () => {
+    btn.addEventListener('mouseup', () => {
         clearTimeout(t);
         writeValueCallback(value);
-      })
     });
 
     let click = () => {
