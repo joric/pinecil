@@ -174,11 +174,11 @@ let updateInterval = 1000; // update interval for poling
 // vars
 let live_temp = 0;
 let power_level = 0;
+let rangeControlLocked = false;
 let writingTempTrigger = false;
 let writingTempValue = 0;
 let connected = false;
 let autoconnect = false;
-let connectedTrigger = false;
 let persistentSettingsTrigger = false;
 let backoffTimeoutID;
 let populatedDevice;
@@ -326,7 +326,6 @@ function connect() {
          cc[BT_UUID_SVC_BULK_DATA + c.uuid] = c
          console.log('All good.');
          connected = true;
-         connectedTrigger = true;
       })
       .catch(function(error) {
         log(error);
@@ -415,15 +414,13 @@ function poll() {
       animateValue('live_temp', temp, updateInterval);
       animateValue('power_level', watt, updateInterval);
 
-      if (connectedTrigger) {
-        connectedTrigger = false;
-        setTempValue(spt);
-      }
-
       document.querySelector("#max_watt").textContent = max_watt;
       document.querySelector("#dc_input").textContent = dc;
       document.querySelector("#handle_temp").textContent = handle;
 
+      if (!rangeControlLocked) {
+        setTempValue(spt);
+      }
 
       if (writingTempTrigger) {
         writingTempTrigger = false;
@@ -439,6 +436,7 @@ function poll() {
           cc[tempID].writeValue(view)
           .then(() => {
             console.log('WRITE! Setpont Temp:', value);
+            rangeControlLocked = false;
           })
           .catch(function(error) {
             console.log('Error writing Setpont Temp.', error);
@@ -656,6 +654,7 @@ const config = {
       value = getValueCallback();
       clickCounter = 0;
       locked = true;
+      rangeControlLocked = true;
       click();
     });
 
@@ -670,6 +669,7 @@ const config = {
         if (locked) {
           writeValueCallback(value);
           locked = false;
+          rangeControlLocked = false;
         }
     });
 
@@ -700,7 +700,7 @@ const config = {
   holdIt('#plus', getTempValue, setTempValue, writeTempValue, min, max, step);
 
   document.querySelector("#temp_range").oninput = function(event) {
-    // we do not want to overload the BLE traffic so just update display here
+    rangeControlLocked = true;
     setTempValue(this.value);
   };
 
