@@ -67,12 +67,13 @@ body, html {
 }
 
 .info {
-  margin-left: auto;
-  text-align: right;
+  text-align: center;
+  margin: auto;
 }
 
-.buttons {
-  align-items: center;
+.buttons-group {
+  text-align: center;
+  margin: auto;
 }
 
 .align-center {
@@ -771,7 +772,7 @@ const config = {
 
       <div class="controls">
 
-        <div class="buttons">
+        <div class="buttons-group">
            <div>Status: <span id="status">disconnected</span></div>
            <div>
              <button id="requestBluetoothDevice" class="btn primary">Pair Device</button>
