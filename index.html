@@ -13,6 +13,37 @@ body, html {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+.temp {
+  color: tomato;
+}
+
+.power {
+  color: #00c4ab;
+}
+
+#deviceSelector {
+  display: none;
+}
+
+.primary {
+  background-color: #00c4ab;
+  color: white;
+  margin-top: 0.5vh;
+}
+
+.label {
+  font-size: 2.5em;
+  font-family: Arial, Helvetica, sans-serif;
+  display: inline;
+}
+
+.btn {
+  padding: 15px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  border: none;
+}
+
 .container {
   width: 100vw;
   height: 100vh;
@@ -55,7 +86,11 @@ body, html {
   display: flex;
   flex-direction: row;
   width: 100%;
-  justify-content: space-evenly;
+  justify-content: space-between;
+}
+
+.buttons-group {
+  text-align: center;
 }
 
 .controls > div {
@@ -64,26 +99,13 @@ body, html {
 
 .info-group {
   display: flex;
+  size: auto;
 }
 
-.info {
+.info-block {
   text-align: center;
   margin: auto;
 }
-
-.buttons-group {
-  text-align: center;
-  margin: auto;
-}
-
-.align-center {
-  align-items: center;
-}
-
-.align-right {
-  margin-left: auto;
-}
-
 
 @media (max-width: 660px) {
   .controls {
@@ -97,38 +119,6 @@ body, html {
   .chart-container {
     height: 50vh;
   }
-}
-
-
-.label {
-  font-size: 2.5em;
-  font-family: Arial, Helvetica, sans-serif;
-  display: inline;
-}
-
-.btn {
-  padding: 15px 20px;
-  border-radius: 4px;
-  cursor: pointer;
-  border: none;
-}
-
-.temp {
-  color: tomato;
-}
-
-.power {
-  color: #00c4ab;
-}
-
-#deviceSelector {
-  display: none;
-}
-
-.primary {
-  background-color: #00c4ab;
-  color: white;
-  margin-top: 0.5vh;
 }
 
 .range-group {
@@ -793,7 +783,7 @@ const config = {
         </div>
 
         <div class="info-group">
-          <div class="inline info">
+          <div class="inline info-block">
             Peak Power: <span id="max_watt">0</span> W
             <br>DC Input: <span id="dc_input">0</span>V
             <br>Handle Temp: <span id="handle_temp">0</span>&deg;C
