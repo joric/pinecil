@@ -23,7 +23,7 @@ body, html {
   display: none;
 }
 
-.center {
+.middle {
   align-items: center;
 }
 
@@ -33,7 +33,6 @@ body, html {
 
 .inline {
   display: inline-block;
-  margin: auto;
 }
 
 .chart-container {
@@ -60,9 +59,7 @@ body, html {
 }
 
 .controls > div {
-  width: 30%;
-  align-items: center;
-  text-align: center;
+  width: 33%;
 }
 
 @media (max-width: 660px) {
@@ -113,7 +110,7 @@ body, html {
 .range-group {
   display: flex;
   min-width: 15em;
-  max-width: 20em;
+  max-width: 25em;
 }
 
 .range-container {
@@ -121,6 +118,7 @@ body, html {
   width: 100%;
   margin-left: 10px;
   margin-right: 10px;
+  text-align: center;
 }
 
 .range-label {
@@ -138,6 +136,21 @@ body, html {
   margin-top: auto;
 }
 
+.flex {
+  display: flex;
+}
+
+.align-left {
+  align-items: left;
+}
+
+.align-center {
+  align-items: center;
+}
+
+.align-right {
+  margin-left: auto;
+}
 
 </style>
 
@@ -148,6 +161,7 @@ body, html {
 
 -->
 
+<script src="chart.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@3.2.1/dist/chart.min.js"></script>
 
 <script>
@@ -722,8 +736,8 @@ const config = {
 </head>
 <body>
 
-<div id="unsupported" class="container center hidden">
-  <div class="inline">
+<div id="unsupported" class="container middle hidden">
+  <div class="inline align-center">
     Bluetooth API is not supported in this browser. What you can do:
     <ul>
       <li>Windows: try latest Chome (does not work on Firefox).</li>
@@ -750,15 +764,15 @@ const config = {
 
       <div class="controls">
 
-         <div>
-            <div>Status: <span id="status">disconnected</span></div>
-            <div>
-              <button id="requestBluetoothDevice" class="btn primary">Pair Device</button>
-            </div>
-            <div id="deviceSelector">
-              <select id="devicesSelect"></select>
-              <button id="forgetBluetoothDevice">Forget</button>
-            </div>
+        <div class="align-left">
+           <div>Status: <span id="status">disconnected</span></div>
+           <div>
+             <button id="requestBluetoothDevice" class="btn primary">Pair Device</button>
+           </div>
+           <div id="deviceSelector">
+             <select id="devicesSelect"></select>
+             <button id="forgetBluetoothDevice">Forget</button>
+           </div>
         </div>
 
         <div class="range-group">
@@ -770,10 +784,12 @@ const config = {
           <button id="plus" class="btn btn-range">+</button>
         </div>
 
-        <div>
-          Peak Power: <span id="max_watt">0</span> W
-          <br>DC Input: <span id="dc_input">0</span>V
-          <br>Handle Temp: <span id="handle_temp">0</span>&deg;C
+        <div class="flex">
+          <div class="inline align-right">
+            Peak Power: <span id="max_watt">0</span> W
+            <br>DC Input: <span id="dc_input">0</span>V
+            <br>Handle Temp: <span id="handle_temp">0</span>&deg;C
+          </div>
         </div>
 
       </div>
