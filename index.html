@@ -289,7 +289,7 @@ function connect() {
 
       log('> Bluetooth Device connected.');
 
-      document.getElementById("status").textContent='connected';
+      document.querySelector("#status").textContent='connected';
 
       bluetoothDevice.gatt.connect()
       .then(function(server) {
@@ -331,7 +331,7 @@ function connect() {
 
     },
     function fail() {
-      document.getElementById("status").textContent='disconnected';
+      document.querySelector("#status").textContent='disconnected';
       time('Failed to reconnect.');
     });
 }
@@ -339,7 +339,7 @@ function connect() {
 function onDisconnected() {
   log('> Bluetooth Device disconnected');
   connected = false;
-  document.getElementById("status").textContent='connecting...';
+  document.querySelector("#status").textContent='connecting...';
   connect();
 }
 
@@ -363,12 +363,12 @@ function time(text) {
 }
 
 function getTempValue() {
-  return parseInt(document.getElementById("temp_range").value);
+  return parseInt(document.querySelector("#temp_range").value);
 }
 
 function setTempValue(value) {
-  document.getElementById("temp_range_label").textContent = value;
-  document.getElementById("temp_range").value = value;
+  document.querySelector("#temp_range_label").textContent = value;
+  document.querySelector("#temp_range").value = value;
 }
 
 function writeTempValue(value) {
@@ -417,9 +417,9 @@ function poll() {
         setTempValue(spt);
       }
 
-      document.getElementById("max_watt").textContent = max_watt;
-      document.getElementById("dc_input").textContent = dc;
-      document.getElementById("handle_temp").textContent = handle;
+      document.querySelector("#max_watt").textContent = max_watt;
+      document.querySelector("#dc_input").textContent = dc;
+      document.querySelector("#handle_temp").textContent = handle;
 
 
       if (writingTempTrigger) {
@@ -688,15 +688,20 @@ const config = {
     }
   };
 
-  holdIt('#minus', getTempValue, setTempValue, writeTempValue, 0, 450, -1);
-  holdIt('#plus', getTempValue, setTempValue, writeTempValue, 0, 450, 1);
+  let range = document.querySelector('#temp_range');
+  let min = parseInt(range.min);
+  let max = parseInt(range.max);
+  let step = parseInt(range.step);
 
-  document.getElementById("temp_range").oninput = function(event) {
+  holdIt('#minus', getTempValue, setTempValue, writeTempValue, min, max, -step);
+  holdIt('#plus', getTempValue, setTempValue, writeTempValue, min, max, step);
+
+  document.querySelector("#temp_range").oninput = function(event) {
     // we do not want to overload the BLE traffic so just update display here
     setTempValue(this.value);
   };
 
-  document.getElementById("temp_range").onchange = function(event) {
+  document.querySelector("#temp_range").onchange = function(event) {
     // check if it was a system event or just setting a value
     if (event) {
       writeTempValue(this.value);
