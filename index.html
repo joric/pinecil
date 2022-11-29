@@ -202,7 +202,7 @@ function init() {
 
   autoconnect = typeof navigator.bluetooth.getDevices != 'undefined'
 
-  console.log('Autoconnect support (chrome://flags/#enable-web-bluetooth-new-permissions-backend)', autoconnect ? 'enabled.':'disabled.');
+  console.log('Autoconnect support (chrome://flags/#enable-web-bluetooth-new-permissions-backend)', autoconnect ? 'enabled (only works in anonymous mode).':'disabled.');
   return true;
 }
 
