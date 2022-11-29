@@ -191,6 +191,8 @@ function init() {
   // handlers: https://github.com/Ralim/IronOS/blob/BLE/source/Core/BSP/Pinecilv2/ble_handlers.cpp
   // there's no notification services yet so I do polling every 1000ms
 
+  console.log('If something does not work, please read project wiki first: https://github.com/joric/pinecil/wiki');
+
   if (typeof navigator == 'undefined' || typeof navigator.bluetooth == 'undefined' || typeof navigator.bluetooth.requestDevice == 'undefined' ) {
     return false;
   }
