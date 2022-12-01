@@ -58,6 +58,7 @@ body, html {
 
 .middle {
   align-items: center;
+  justify-content: center;
 }
 
 .top {
@@ -745,11 +746,11 @@ const config = {
 <body>
 
 <div id="unsupported" class="container middle hidden">
-  <div class="inline align-center">
+  <div class="inline">
     Bluetooth API is not supported in this browser. What you can do:
     <ul>
-      <li>Windows: try latest Chome (does not work on Firefox).</li>
-      <li>Linux: try Enabling `web-bluetooth*` flags in  chrome://flags.</li>
+      <li>Windows: try latest Chome (does not work on Firefox)</li>
+      <li>Linux: try Enabling "web-bluetooth*" flags in  chrome://flags</li>
       <li>MacOS: try Bluefy browser (not guaranteed to work).</li>
     </ul>
   </div>
