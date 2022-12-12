@@ -10,7 +10,7 @@
 body, html {
   margin: 0; padding: 0; 
   height:100%;
-  font-size: 1.1em;
+  font-size: 1.05em;
   font-family: Arial, Helvetica, sans-serif;
 }
 
@@ -110,7 +110,7 @@ body, html {
   margin: auto;
 }
 
-@media (max-width: 666px) {
+@media (max-width: 650px) {
   .controls {
     flex-direction: column;
     align-items: center;
@@ -127,7 +127,7 @@ body, html {
 
 .range-group {
   display: flex;
-  min-width: 14em;
+  min-width: 13em;
   max-width: 25em;
 }
 
@@ -150,7 +150,7 @@ body, html {
 }
 
 .btn-range {
-  padding: 12.5px 20px;
+  padding: 12px 18px;
   font-weight: bold;
   margin-top: auto;
 }
@@ -385,7 +385,7 @@ function writeTempValue(value) {
   }
 }
 
-temp = spt = handle = dc = watt = max_watt = 0;
+temp = spt = handle = dc = watt = max_watt = 666;
 
 function poll() {
   liveID = BT_UUID_SVC_BULK_DATA + BT_UUID_CHAR_BLE_BULK_LIVE_DATA;
