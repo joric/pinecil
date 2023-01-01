@@ -10,6 +10,7 @@ Bluetooth web client for Pinecil V2 - Utilizes [web-bluetooth](https://developer
 ![Pinecil web ui](/pinecil_web.png)
 
 ## Compatibility
-- Windows: try latest Chome (does not work on Firefox)
+- Windows: try latest Chrome (does not work on Firefox)
+- Android: try latest Chrome
 - Linux: try Enabling “web-bluetooth*” flags in chrome://flags
 - MacOS: try Bluefy browser (not guaranteed to work).
