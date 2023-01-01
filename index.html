@@ -30,7 +30,7 @@ body, html {
 
 .primary {
   background-color: #00c45b; /* more green green */
-  color: black;
+  color: white;
   margin-top: 0.5vh;
 }
 
@@ -782,6 +782,7 @@ const config = {
            <div>Status: <span id="status">disconnected</span></div>
            <div>
              <button id="requestBluetoothDevice" class="btn primary">Pair Device</button>
+             <button class="btn primary" onclick="document.documentElement.requestFullscreen()">Fullscreen</button>
            </div>
            <div id="deviceSelector">
              <select id="devicesSelect"></select>
