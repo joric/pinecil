@@ -1,4 +1,4 @@
-# pinecil dark mode
+# Pinecil BLE web interface (dark mode)
 
 Bluetooth client for Pinecil V2
 
