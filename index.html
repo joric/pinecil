@@ -289,7 +289,36 @@ function populateBluetoothDevices(tryToConnect) {
     log('Argh! ' + error);
   });
 }
+    
+// The wake lock sentinel.
+let wakeLock = null;
 
+// Function that attempts to request a wake lock.
+const requestWakeLock = async () => {
+  try {
+    wakeLock = await navigator.wakeLock.request('screen');
+    wakeLock.addEventListener('release', () => {
+      log('Wake Lock was released');
+    });
+    log('Wake Lock is active');
+  } catch (err) {
+    console.error(`${err.name}, ${err.message}`);
+  }
+};    
+
+// Function that attempts to release the wake lock.
+const releaseWakeLock = async () => {
+  if (!wakeLock) {
+    return;
+  }
+  try {
+    await wakeLock.release();
+    wakeLock = null;
+  } catch (err) {
+    console.error(`${err.name}, ${err.message}`);
+  }
+};
+    
 function connect() {
   exponentialBackoff(3 /* max retries */, 2 /* seconds delay */,
     function toTry() {
@@ -299,6 +328,8 @@ function connect() {
     function success() {
 
       log('> Bluetooth Device connected.');
+      
+      requestWakeLock();
 
       document.querySelector("#status").textContent='connected';
 
@@ -348,6 +379,7 @@ function connect() {
 
 function onDisconnected() {
   log('> Bluetooth Device disconnected');
+  releaseWakeLock();
   connected = false;
   document.querySelector("#status").textContent='connecting...';
   connect();
