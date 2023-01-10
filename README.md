@@ -14,3 +14,7 @@ Bluetooth web client for Pinecil V2 - Utilizes [web-bluetooth](https://developer
 - Android: try latest Chrome
 - Linux: try Enabling “web-bluetooth*” flags in chrome://flags
 - MacOS: try Bluefy browser (not guaranteed to work).
+
+## Issues
+- If your Pinecil is set to display the teperature as F instead of C, the webview will interpret F as C. Please Switch your Pinecil display temp to C until this is fixed.
+- Webpage does not send keep-awake to the computer while connected. Your phone/laptop will go to sleep, even when fullscreen. 
