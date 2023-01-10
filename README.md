@@ -1,4 +1,4 @@
-# Pinecil BLE web interface (dark mode)
+# Pinecil BLE web interface
 
 Bluetooth web client for Pinecil V2 - Utilizes [web-bluetooth](https://developer.mozilla.org/en-US/docs/Web/API/Web_Bluetooth_API)
 
