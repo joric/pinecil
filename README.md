@@ -2,7 +2,8 @@
 
 Bluetooth web client for Pinecil V2 - Utilizes [web-bluetooth](https://developer.mozilla.org/en-US/docs/Web/API/Web_Bluetooth_API)
 
-* Live demo: https://joric.github.io/pinecil/ <- click to launch.
+* Live demo (light theme): https://joric.github.io/pinecil/
+* Dark theme: https://pips801.github.io/pinecil
 * Wiki: https://github.com/joric/pinecil/wiki
 
 
