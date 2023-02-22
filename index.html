@@ -202,8 +202,8 @@ function init() {
   BT_UUID_CHAR_BLE_BULK_LIVE_DATA       = BluetoothUUID.canonicalUUID(1);
 
   BT_UUID_SVC_SETTINGS_DATA             = 'f6d75f91-5a10-4eba-a233-47d3f26a907f'; // settings service
-  BT_UUID_CHAR_BLE_SETTINGS_VALUE_SAVE  = BluetoothUUID.canonicalUUID(0); // write 1 to save settings
-  BT_UUID_CHAR_BLE_SETTINGS_VALUE_1     = BluetoothUUID.canonicalUUID(1); // setpoint temp setting
+  BT_UUID_CHAR_BLE_SETTINGS_VALUE_SAVE  = BluetoothUUID.canonicalUUID("0xFFFF"); // write 1 to save settings
+  BT_UUID_CHAR_BLE_SETTINGS_VALUE_SETPOINT     = BluetoothUUID.canonicalUUID(0); // setpoint temp setting
 
   autoconnect = typeof navigator.bluetooth.getDevices != 'undefined'
 
@@ -310,7 +310,7 @@ function connect() {
               cc[BT_UUID_SVC_SETTINGS_DATA + c.uuid] = c
             })
 
-            return service.getCharacteristic(BT_UUID_CHAR_BLE_SETTINGS_VALUE_1);
+            return service.getCharacteristic(BT_UUID_CHAR_BLE_SETTINGS_VALUE_SETPOINT);
         })
         .then(function(c) {
             console.log('setting',c);
@@ -396,22 +396,30 @@ function poll() {
     .then(value => {
 
 /*
-    uint32_t bulkData[] = {
-        TipThermoModel::getTipInC(),                                         // Current temp
-        getSettingValue(SettingsOptions::SolderingTemp),                     // Setpoint
-        getHandleTemperature(0),                                             // Handle X10 Temp in C
-        getInputVoltageX10(getSettingValue(SettingsOptions::VoltageDiv), 0), // Input voltage
-        x10WattHistory.average(),                                            // Estimated Wattage
-        X10WattsToPWM(x10WattHistory.average()),                             // Power as PWM level
-        TipThermoModel::convertTipRawADCTouV(getTipRawTemp(0), true),        // Raw tip
-    };
+      uint32_t bulkData[] = {
+          TipThermoModel::getTipInC(),                                         // 0  - Current temp
+          getSettingValue(SettingsOptions::SolderingTemp),                     // 1  - Setpoint
+          getInputVoltageX10(getSettingValue(SettingsOptions::VoltageDiv), 0), // 2  - Input voltage
+          getHandleTemperature(0),                                             // 3  - Handle X10 Temp in C
+          X10WattsToPWM(x10WattHistory.average()),                             // 4  - Power as PWM level
+          getPowerSrc(),                                                       // 5  - power src
+          getTipResistanceX10(),                                               // 6  - Tip resistance
+          xTaskGetTickCount() / TICKS_100MS,                                   // 7  - uptime in deciseconds
+          lastMovementTime / TICKS_100MS,                                      // 8  - last movement time (deciseconds)
+          TipThermoModel::getTipMaxInC(),                                      // 9  - max temp
+          TipThermoModel::convertTipRawADCTouV(getTipRawTemp(0), true),        // 10 - Raw tip in μV
+          abs(getRawHallEffect()),                                             // 11 - hall sensor
+          currentMode,                                                         // 12 - Operating mode
+          x10WattHistory.average(),                                            // 13 - Estimated Wattage *10
+      };
 */
-
+      // each item in the struct has 4 bits
       temp = value.getUint32(0, true);
       spt = value.getUint32(4, true);
-      handle = value.getUint32(8, true) / 10;
-      dc = value.getUint32(12, true) / 10;
-      watt = Math.round(value.getUint32(16, true) / 10);
+      dc = value.getUint32(8, true) / 10;
+      handle = value.getUint32(12, true) / 10;
+
+      watt = Math.round(value.getUint32(52, true) / 10);
 
       max_watt = Math.max(max_watt, watt);
 
@@ -429,7 +437,7 @@ function poll() {
       if (writingTempTrigger) {
         writingTempTrigger = false;
 
-        tempID = BT_UUID_SVC_SETTINGS_DATA + BT_UUID_CHAR_BLE_SETTINGS_VALUE_1
+        tempID = BT_UUID_SVC_SETTINGS_DATA + BT_UUID_CHAR_BLE_SETTINGS_VALUE_SETPOINT
 
         if (connected && cc[tempID]) {
           value = writingTempValue;
