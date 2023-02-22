@@ -202,8 +202,8 @@ function init() {
   BT_UUID_CHAR_BLE_BULK_LIVE_DATA       = BluetoothUUID.canonicalUUID(1);
 
   BT_UUID_SVC_SETTINGS_DATA             = 'f6d75f91-5a10-4eba-a233-47d3f26a907f'; // settings service
-  BT_UUID_CHAR_BLE_SETTINGS_VALUE_SAVE  = BluetoothUUID.canonicalUUID(0); // write 1 to save settings
-  BT_UUID_CHAR_BLE_SETTINGS_VALUE_1     = BluetoothUUID.canonicalUUID(1); // setpoint temp setting
+  BT_UUID_CHAR_BLE_SETTINGS_VALUE_SAVE  = BluetoothUUID.canonicalUUID("0xFFFF"); // write 1 to save settings
+  BT_UUID_CHAR_BLE_SETTINGS_VALUE_SETPOINT     = BluetoothUUID.canonicalUUID(0); // setpoint temp setting
 
   autoconnect = typeof navigator.bluetooth.getDevices != 'undefined'
 
@@ -310,7 +310,7 @@ function connect() {
               cc[BT_UUID_SVC_SETTINGS_DATA + c.uuid] = c
             })
 
-            return service.getCharacteristic(BT_UUID_CHAR_BLE_SETTINGS_VALUE_1);
+            return service.getCharacteristic(BT_UUID_CHAR_BLE_SETTINGS_VALUE_SETPOINT);
         })
         .then(function(c) {
             console.log('setting',c);
@@ -437,7 +437,7 @@ function poll() {
       if (writingTempTrigger) {
         writingTempTrigger = false;
 
-        tempID = BT_UUID_SVC_SETTINGS_DATA + BT_UUID_CHAR_BLE_SETTINGS_VALUE_1
+        tempID = BT_UUID_SVC_SETTINGS_DATA + BT_UUID_CHAR_BLE_SETTINGS_VALUE_SETPOINT
 
         if (connected && cc[tempID]) {
           value = writingTempValue;
