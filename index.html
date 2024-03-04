@@ -409,15 +409,15 @@ function poll() {
           TipThermoModel::getTipMaxInC(),                                      // 9  - max temp
           TipThermoModel::convertTipRawADCTouV(getTipRawTemp(0), true),        // 10 - Raw tip in μV
           abs(getRawHallEffect()),                                             // 11 - hall sensor
-          currentMode,                                                         // 12 - Operating mode
+          (uint32_t)currentOperatingMode,                                      // 12 - Operating mode
           x10WattHistory.average(),                                            // 13 - Estimated Wattage *10
       };
 */
       // each item in the struct has 4 bits
       temp = value.getUint32(0, true);
       spt = value.getUint32(4, true);
-      dc = value.getUint32(8, true) / 10;
-      handle = value.getUint32(12, true) / 10;
+      handle = value.getUint32(8, true) / 10;
+      dc = value.getUint32(12, true) / 10;
 
       watt = Math.round(value.getUint32(52, true) / 10);
 
